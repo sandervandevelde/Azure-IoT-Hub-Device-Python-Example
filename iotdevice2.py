@@ -22,7 +22,12 @@ INTERVAL = 2
 
 def create_client():
     # Create an IoT Hub client
-    client = IoTHubDeviceClient.create_from_connection_string(CONNECTION_STRING)
+
+    model_id = "dtmi:com:example:NonExistingController;1"
+
+    client = IoTHubDeviceClient.create_from_connection_string(
+                CONNECTION_STRING,
+                product_info=model_id)
 
     # *** Direct Method ***
     #
@@ -80,6 +85,7 @@ def create_client():
         client.on_twin_desired_properties_patch_received = twin_patch_handler
 
         client.connect()
+
         twin = client.get_twin()
         print ( "Twin at startup is" )
         print ( twin )
