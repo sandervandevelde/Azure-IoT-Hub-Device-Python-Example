@@ -69,9 +69,13 @@ def create_client():
         print ( "Reported properties updated" )
 
     try:
-        # Attach the method request handler
+        # Attach the direct method request handler
         client.on_method_request_received = method_request_handler
+
+        # Attach the cloud message request handler
         client.on_message_received = message_received_handler
+
+        # Attach the Device Twin Desired properties change request handler
         client.on_twin_desired_properties_patch_received = twin_patch_handler
     except:
         # Clean up in the event of failure
