@@ -1,6 +1,9 @@
 # Azure-IoT-Hub-Device-Python-Example
 Azure IoT Hub Device example, written in Python. It supports both D2C and C2D communication
 
+## Blog post
+Check out the [blog post](https://sandervandevelde.wordpress.com/2022/01/24/azure-iot-deviceclient-sdk-python-demonstration-the-basics/) behind this sample code for more background information.
+
 ## Resources
 This code is based on thiese resources:
 
@@ -9,3 +12,4 @@ This code is based on thiese resources:
 * https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-python-twin-getstarted#create-the-device-app
 
 Check out the details there for more indept information.
+
