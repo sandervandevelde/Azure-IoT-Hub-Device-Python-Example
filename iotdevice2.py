@@ -5,6 +5,7 @@ import random
 import time
 import os
 from azure.iot.device import IoTHubDeviceClient, Message, MethodResponse
+from pyparsing import empty
 
 # The device connection string to authenticate the device with your IoT hub.
 # Using the Azure CLI:
@@ -27,7 +28,7 @@ def create_client():
     #
     # Define a method request handler
     def method_request_handler(method_request):
-       
+        
         print(MSG_LOG.format(name=method_request.name, payload=method_request.payload))
 
         if method_request.name == "SetTelemetryInterval":
@@ -38,7 +39,7 @@ def create_client():
                 response_payload = {"Response": "Invalid parameter"}
                 response_status = 400
             else:
-                response_payload = {"Response": "Executed direct method {}".format(method_request.name)}
+                response_payload = {"Response": "Executed direct method {}, interval updated".format(method_request.name)}
                 response_status = 200
         else:
             response_payload = {"Response": "Direct method {} not defined".format(method_request.name)}
@@ -64,7 +65,7 @@ def create_client():
         print("the data in the desired properties patch was: {}".format(patch))
         # Update reported properties with cellular information
         print ( "Sending data as reported property..." )
-        reported_patch = {"reportedValue": "done"}
+        reported_patch = {"reportedValue": 42}
         client.patch_twin_reported_properties(reported_patch)
         print ( "Reported properties updated" )
 
@@ -77,6 +78,11 @@ def create_client():
 
         # Attach the Device Twin Desired properties change request handler
         client.on_twin_desired_properties_patch_received = twin_patch_handler
+
+        client.connect()
+        twin = client.get_twin()
+        print ( "Twin at startup is" )
+        print ( twin )
     except:
         # Clean up in the event of failure
         client.shutdown()
@@ -113,6 +119,7 @@ def run_telemetry_sample(client):
         # Send the message.
         print("Sending message: {}".format(message))
         client.send_message(message)
+
         print("Message sent")
         time.sleep(INTERVAL)
 
