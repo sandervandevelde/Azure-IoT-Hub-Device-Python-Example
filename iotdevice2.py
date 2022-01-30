@@ -27,7 +27,8 @@ def create_client():
 
     client = IoTHubDeviceClient.create_from_connection_string(
                 CONNECTION_STRING,
-                product_info=model_id)
+                product_info=model_id,
+                websockets=True)  # used for communication over websockets (port 443)
 
     # *** Direct Method ***
     #
