@@ -1,12 +1,20 @@
 # Azure-IoT-Hub-Device-Python-Example
-Azure IoT Hub Device example, written in Python. It supports both D2C and C2D communication
+Both Azure IoT Hub Device example and Azure IoT Device Provisioning Service enrollment example, written in Python. It supports both D2C and C2D communication.
 
 ## Blog post
 Check out the [blog post](https://sandervandevelde.wordpress.com/2022/01/24/azure-iot-deviceclient-sdk-python-demonstration-the-basics/) behind this sample code for more background information.
 
-## Device connection string
+## Two examples
+
+Both examples are exposing the same logic.
+
+### IoT Hub - Device connection string
 
 This code expects an Environment variable named 'IOTHUB_DEVICE_CONNECTION_STRING' to be present. Otherwise the app will fail to authenticate. See the blog post for instructions.
+
+### DPS - individual enrollment, symmetric key
+
+This code expects Environment variables named "PROVISIONING_HOST", "PROVISIONING_IDSCOPE", "PROVISIONING_REGISTRATION_ID", and "PROVISIONING_SYMMETRIC_KEY".
 
 ## Resources
 This code is based on thiese resources:
