@@ -9,7 +9,7 @@ import random
 from azure.iot.device import ProvisioningDeviceClient
 import os
 import time
-from azure.iot.device import IoTHubDeviceClient, Message
+from azure.iot.device import IoTHubDeviceClient, Message, MethodResponse
 import uuid
 
 provisioning_host = os.getenv("PROVISIONING_HOST")
@@ -46,12 +46,82 @@ def create_client():
 
     if registration_result.status == "assigned":
         print("Will send telemetry from the provisioned device")
+
+        model_id = "dtmi:com:example:NonExistingController;1"
+
         # Create device client from the above result
         client = IoTHubDeviceClient.create_from_symmetric_key(
             symmetric_key=symmetric_key,
             hostname=registration_result.registration_state.assigned_hub,
             device_id=registration_result.registration_state.device_id,
+            product_info=model_id,
+            websockets=True,
         )
+
+        # *** Direct Method ***
+        #
+        # Define a method request handler
+        def method_request_handler(method_request):
+            
+            print(MSG_LOG.format(name=method_request.name, payload=method_request.payload))
+
+            if method_request.name == "SetTelemetryInterval":
+                try:
+                    global INTERVAL
+                    INTERVAL = int(method_request.payload)
+                except ValueError:
+                    response_payload = {"Response": "Invalid parameter"}
+                    response_status = 400
+                else:
+                    response_payload = {"Response": "Executed direct method {}, interval updated".format(method_request.name)}
+                    response_status = 200
+            else:
+                response_payload = {"Response": "Direct method {} not defined".format(method_request.name)}
+                response_status = 404
+
+            method_response = MethodResponse.create_from_method_request(method_request, response_status, response_payload)
+            client.send_method_response(method_response)
+
+            # *** Cloud message ***
+            #
+            # define behavior for receiving a message
+            def message_received_handler(message):
+                print("the data in the message received was ")
+                print(message.data)
+                print("custom properties are")
+                print(message.custom_properties)
+
+            # *** Device Twin ***
+            #
+            # define behavior for receiving a twin patch
+            # NOTE: this could be a function or a coroutine
+            def twin_patch_handler(patch):
+                print("the data in the desired properties patch was: {}".format(patch))
+                # Update reported properties with cellular information
+                print ( "Sending data as reported property..." )
+                reported_patch = {"reportedValue": 42}
+                client.patch_twin_reported_properties(reported_patch)
+                print ( "Reported properties updated" )
+
+            try:
+                # Attach the direct method request handler
+                client.on_method_request_received = method_request_handler
+
+                # Attach the cloud message request handler
+                client.on_message_received = message_received_handler
+
+                # Attach the Device Twin Desired properties change request handler
+                client.on_twin_desired_properties_patch_received = twin_patch_handler
+
+                client.connect()
+
+                twin = client.get_twin()
+                print ( "Twin at startup is" )
+                print ( twin )
+            except:
+                # Clean up in the event of failure
+                client.shutdown()
+                raise
 
         return client
     else:
