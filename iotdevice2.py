@@ -4,8 +4,11 @@
 import random
 import time
 import os
+import logging
 from azure.iot.device import IoTHubDeviceClient, Message, MethodResponse
 from pyparsing import empty
+
+logging.basicConfig(level=logging.INFO)
 
 # The device connection string to authenticate the device with your IoT hub.
 # Using the Azure CLI:
