@@ -1,9 +1,3 @@
-# -------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
-# license information.
-# --------------------------------------------------------------------------
-
 from asyncio.windows_events import NULL
 import random
 from azure.iot.device import ProvisioningDeviceClient
@@ -11,6 +5,9 @@ import os
 import time
 from azure.iot.device import IoTHubDeviceClient, Message, MethodResponse
 import uuid
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 provisioning_host = os.getenv("PROVISIONING_HOST")
 id_scope = os.getenv("PROVISIONING_IDSCOPE")
