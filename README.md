@@ -25,3 +25,10 @@ This code is based on thiese resources:
 
 Check out the details there for more indept information.
 
+## Missing packages
+
+if packages are missing, like Azure, try:
+
+    pip install azure.iot.device
+
+Check the 'from' lines in the code for package names.
